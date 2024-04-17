@@ -162,4 +162,4 @@ cython_debug/
 .log
 *.log.json
 log.json
-/static
+internal/sampleDB
