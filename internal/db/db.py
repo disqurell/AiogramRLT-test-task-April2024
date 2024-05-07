@@ -2,6 +2,10 @@ from pydantic_settings import BaseSettings
 
 
 class MongoConfig(BaseSettings):
+    # Если вы случайно нашли этот репозиторий,
+    # помните: никакого хардкода для конфигураций!
+    # Это тестовый пример. Тут можно)
+
     MONGO_HOST: str = "localhost"
     MONGO_USER: str = "mongoadmin"
     MONGO_PORT: int = 27017

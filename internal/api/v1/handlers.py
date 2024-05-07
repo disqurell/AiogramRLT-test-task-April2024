@@ -24,7 +24,7 @@ async def handle_message(message: types.Message):
         data_dict.get("dt_from", None),
         data_dict.get("dt_upto", None),
         data_dict.get("group_type", None),
-    ))
+    )).replace("'", "\"")
 
     if len(answer) > 4096:
         for x in range(0, len(answer), 4096):

@@ -87,32 +87,24 @@ def sort_and_format(input_data, group_type, dt_from, dt_upto):
 
     formatted_data = {"dataset": dataset, "labels": labels}
     s_date = datetime.strptime(dt_from, TimeIntervalPatterns.FULL.value)
-    days = abs(
+
+    delta = abs(
         (
-            datetime.strptime(dt_from, TimeIntervalPatterns.FULL.value)
-            - datetime.strptime(dt_upto, TimeIntervalPatterns.FULL.value)
-        ).days
+            datetime.strptime(dt_upto, TimeIntervalPatterns.FULL.value)
+            - datetime.strptime(dt_from, TimeIntervalPatterns.FULL.value)
+        )
     )
 
     match group_type:
         case TimeInterval.HOUR.value:
+            hours = int(delta / timedelta(minutes=1) / 60)
+
             labels_ideal = [
                 (s_date + timedelta(hours=idx)).strftime(
                     TimeIntervalPatterns.FULL.value
                 )
-                for idx in range(24)
+                for idx in range(hours + 1)
             ]
-
-            if days > 0:
-                for day in range(1, days + 1):
-                    labels_ideal.extend(
-                        [
-                            (
-                                s_date + timedelta(hours=idx) + timedelta(days=day)
-                            ).strftime(TimeIntervalPatterns.FULL.value)
-                            for idx in range(24)
-                        ]
-                    )
 
             dataset_ideal = [0 for i in range(len(labels_ideal))]
 
@@ -124,12 +116,12 @@ def sort_and_format(input_data, group_type, dt_from, dt_upto):
                     ideal_data["dataset"][index_ideal] = formatted_data["dataset"][i]
 
         case TimeInterval.DAY.value:
-            if days > 0:
+            if delta.days > 0:
                 labels_ideal = [
                     (s_date + timedelta(days=idx)).strftime(
                         TimeIntervalPatterns.FULL.value
                     )
-                    for idx in range(days)
+                    for idx in range(delta.days+1)
                 ]
 
             dataset_ideal = [0 for _ in range(len(labels_ideal))]
@@ -140,6 +132,7 @@ def sort_and_format(input_data, group_type, dt_from, dt_upto):
                 if label in labels_ideal:
                     index_ideal = labels_ideal.index(label)
                     ideal_data["dataset"][index_ideal] = formatted_data["dataset"][i]
+
         case TimeInterval.MONTH.value:
             months_count = (
                 abs(
